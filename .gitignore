@@ -1,0 +1,5 @@
+venv/
+unzip/
+data
+.idea/
+__pycache__/
