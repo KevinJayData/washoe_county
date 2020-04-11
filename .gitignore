@@ -3,3 +3,4 @@ unzip/
 data
 .idea/
 __pycache__/
+long_data.csv

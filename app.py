@@ -8,12 +8,12 @@ import os
 import download_data
 
 
-def execute():
-    data = download_data.download_data_from_website()
-    long_df = download_data.wide_to_long_conversion(data)
+def execute(debug=True):
+    data = download_data.download_data_from_website(debug)
+    long_df = download_data.wide_to_long_conversion(debug, data)
 
     embed()
-    download_data.delete_all_files()
+    download_data.delete_all_files(debug)
 
 
 if __name__=="__main__":
