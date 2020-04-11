@@ -25,18 +25,9 @@ def download_data_from_website(debug):
             zip_ref.extractall('unzip')
 
     # If it exists already just read it in
-    df = pd.read_csv('unzip/Quick_Info.txt', sep="\t", chunksize=100000)
+    df = pd.read_csv('unzip/Quick_Info.txt', sep="\t")
+
     return df
-
-
-def delete_all_files(debug):
-    if not debug:
-        if os.path.exists('unzip'):
-            shutil.rmtree('unzip')
-        if os.path.exists('data'):
-            os.remove('data')
-        if os.path.exists('long_data'):
-            os.remove('long_data')
 
 
 def wide_to_long_conversion(debug, df):
@@ -48,7 +39,7 @@ def wide_to_long_conversion(debug, df):
     """
     if os.path.exists('long_data.csv') or debug:
         print('Grabbing the long version of  data we already have')
-        long_df= pd.read_csv('long_data.csv', chunksize=100000)
+        long_df = pd.read_csv('long_data.csv', sep=',', chunksize=100000)
     else:
         print('Melting the df')
         samt = ['SAMT1', 'SAMT2', 'SAMT3', 'SAMT4', 'SAMT5', 'SAMT6']
@@ -76,11 +67,18 @@ def wide_to_long_conversion(debug, df):
                              long_dict['LUCatSAle'][long_dict['LUCatSAle'].columns[-2:]],
                              long_dict['GrantorLastName'][long_dict['GrantorLastName'].columns[-2:]],
                              ], axis=1)
-
-        long_df.to_csv('long_data.csv', sep=',')
+    if debug and not os.path.exists('long_data.csv'):
+        long_df.to_csv('long_df.csv', sep=',')
 
     return long_df
 
 
-
-
+def delete_all_files(debug):
+    if not debug:
+        if os.path.exists('unzip'):
+            shutil.rmtree('unzip')
+        if os.path.exists('data'):
+            os.remove('data')
+        if os.path.exists('long_data.csv'):
+            os.remove('long_data.csv')
+        print('All files deleted, thanks for enjoying my project')
