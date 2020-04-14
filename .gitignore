@@ -3,4 +3,6 @@ unzip/
 data
 .idea/
 __pycache__/
-long_data.csv
+long_df.csv
+plots/
+.DS_Store
