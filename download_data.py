@@ -7,7 +7,6 @@ import numpy as np
 import os
 import warnings
 import cpi
-from IPython import embed
 
 
 def download_data_from_website():
@@ -34,6 +33,9 @@ def wide_to_long_conversion(df):
     :param df: wide data as downloaded from the website
     :return: long df for analysis
     """
+    # Just grab single family homes by Zoning code SF.  This ignores industrial, commercial, multifamily, etc.. property
+    df = df.loc[df.Zoning.str.contains('SF', na=False)]
+
     print('Melting the df')
     samt = ['SAMT1', 'SAMT2', 'SAMT3', 'SAMT4', 'SAMT5', 'SAMT6']
     sdat = ['SDAT1', 'SDAT2', 'SDAT3', 'SDAT4', 'SDAT5', 'SDAT6']
@@ -70,10 +72,10 @@ def inflation_adjust(long_df):
 
     long_df['cpi_year'] = pd.to_datetime(long_df['cpi_year']).dt.to_period('Y')
     long_df['cpi_year'] = long_df.cpi_year.astype(str).astype(int)
-    long_df.drop(long_df[long_df.cpi_year < 1950].index, inplace=True)
+    long_df.drop(long_df[long_df.cpi_year < 1970].index, inplace=True)
     long_df.reset_index(drop=True, inplace=True)
-
-    long_df['cpi_samt_value'] = long_df.apply(lambda x: x.SAMT_value*0.97 if x.cpi_year in (2019, 2020) else cpi.inflate(x.SAMT_value, x.cpi_year, to=2018), axis=1)
+    # Normalized to 1983 prices because thats what FRED uses: https://fred.stlouisfed.org/series/CPIAUCSL
+    long_df['cpi_samt_value'] = long_df.apply(lambda x: x.SAMT_value*0.4 if x.cpi_year in (2019, 2020) else cpi.inflate(x.SAMT_value, x.cpi_year, to=1983), axis=1)
     long_df['cpi_samt_value_log'] = np.log(long_df['cpi_samt_value'])
 
     print('There are {} property sales in our dataset'.format(len(long_df)))

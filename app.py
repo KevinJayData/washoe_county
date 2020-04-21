@@ -1,4 +1,3 @@
-from IPython import embed
 import shutil
 import urllib.request as request
 from contextlib import closing
@@ -9,7 +8,7 @@ import download_data
 import analysis.graph as graph
 
 
-def execute(debug=True):
+def execute(debug=False):
     if debug and os.path.exists('long_df.csv'):
         print('Using Data we already have on hand')
         chunks = pd.read_csv('long_df.csv', sep=',', chunksize=200000)
@@ -27,11 +26,12 @@ def execute(debug=True):
     # Begin exploratory analysis of the data
 
     graph.histograms(long_df)
+    graph.median_housing_price_per_year(long_df)
 
 
 
 
-    # download_data.delete_all_files(debug)
+    download_data.delete_all_files(debug)
 
 
 if __name__=="__main__":
